@@ -66,10 +66,23 @@ class getRecord(Resource):
             }
             result.append(dict)
         return result
-        
+class addPresc(Resource):
+    def get(self,rid,uid):
+        conn = e.connect()
+        conn.execute("insert into prescription values("+str(rid)+",'"+uid+"')")
+class getPresc(Resource):
+    def get(self,rid):
+        result = []
+        conn = e.connect()
+        query = conn.execute("select uid from prescription where rid="+str(rid))
+        for i in query.cursor.fetchall():
+            result.append(i[0])
+        return result
 api.add_resource(getpatients,'/getp/<string:name>')
 api.add_resource(addPatient,'/addPatient/<string:name>/<string:email>/<string:phone>/<string:gender>/<string:dob>/<string:addr>')
 api.add_resource(addRecord,'/addRecord/<int:id>/<string:title>')
 api.add_resource(getRecord,'/getRecord/<int:id>')
+api.add_resource(addPresc,'/addPresc/<int:rid>/<string:uid>')
+api.add_resource(getPresc,'/getPresc/<int:rid>')
 if __name__ == '__main__':
     app.run()
