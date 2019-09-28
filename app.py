@@ -3,6 +3,7 @@ from flask_restful import Resource, Api
 from sqlalchemy import create_engine
 from json import dumps,dump
 from flask_cors import CORS
+import datetime
 e = create_engine('sqlite:///app.db')
 app = Flask(__name__)
 api = Api(app)
@@ -32,13 +33,43 @@ class addPatient(Resource):
         #Connect to databse
         addr = addr.replace("*","/")
         conn = e.connect()
-        cquerry= conn.execute("select pcount from counters")
+        cquerry= conn.execute("select pcount from counters where name='Patient'")
         id = cquerry.cursor.fetchall()[0][0]
-        conn.execute("update counters set pcount=pcount+1")
+        conn.execute("update counters set pcount=pcount+1 where name='Patient'")
         values = "('%d','%s','%s',%d,'%s','%s','%s')" %(int(id),name,email,int(phone),gender,dob,addr)
         #Perform query and return JSON data
         query = conn.execute("insert into patient values"+values)
+class addRecord(Resource):
+    def get(self,id,title):
+        today = datetime.datetime.now()
+        tdate = today.strftime('%d-%b-%y')
+        ttime = today.strftime('%I:%M %p')
+        conn = e.connect()
+        cquerry= conn.execute("select pcount from counters where name='Record'")
+        rid = cquerry.cursor.fetchall()[0][0]
+        conn.execute("update counters set pcount=pcount+1 where name='Record'")
+        values= "(%d,%d,'%s','%s','%s')" %(int(id),int(rid),tdate,title,ttime)
+        query = conn.execute("insert into Records values"+values)
+        
+class getRecord(Resource):
+    def get(self,id):
+        result = []
+        conn = e.connect()
+        query = conn.execute("select * from Records where id="+str(id))
+        for i in query.cursor.fetchall():
+            dict = {
+                'id' : i[0],
+                'rid' : i[1],
+                'tdate' : i[2],
+                'title' : i[3],
+                'ttime' : i[4],
+            }
+            result.append(dict)
+        return result
+        
 api.add_resource(getpatients,'/getp/<string:name>')
 api.add_resource(addPatient,'/addPatient/<string:name>/<string:email>/<string:phone>/<string:gender>/<string:dob>/<string:addr>')
+api.add_resource(addRecord,'/addRecord/<int:id>/<string:title>')
+api.add_resource(getRecord,'/getRecord/<int:id>')
 if __name__ == '__main__':
     app.run()
