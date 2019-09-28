@@ -78,11 +78,54 @@ class getPresc(Resource):
         for i in query.cursor.fetchall():
             result.append(i[0])
         return result
+class addXray(Resource):
+    def get(self,id,uid):
+        conn = e.connect()
+        conn.execute("insert into xray values("+str(id)+",'"+uid+"')")
+class getXray(Resource):
+    def get(self,id):
+        result = []
+        conn = e.connect()
+        query = conn.execute("select uid from xray where id="+str(id))
+        for i in query.cursor.fetchall():
+            result.append(i[0])
+        return result
+class addReport(Resource):
+    def get(self,id,uid):
+        conn = e.connect()
+        conn.execute("insert into report values("+str(id)+",'"+uid+"')")
+class getReport(Resource):
+    def get(self,id):
+        result = []
+        conn = e.connect()
+        query = conn.execute("select uid from report where id="+str(id))
+        for i in query.cursor.fetchall():
+            result.append(i[0])
+        return result
+
+class addMisc(Resource):
+    def get(self,id,uid):
+        conn = e.connect()
+        conn.execute("insert into misc values("+str(id)+",'"+uid+"')")
+class getMisc(Resource):
+    def get(self,id):
+        result = []
+        conn = e.connect()
+        query = conn.execute("select uid from misc where id="+str(id))
+        for i in query.cursor.fetchall():
+            result.append(i[0])
+        return result
 api.add_resource(getpatients,'/getp/<string:name>')
 api.add_resource(addPatient,'/addPatient/<string:name>/<string:email>/<string:phone>/<string:gender>/<string:dob>/<string:addr>')
 api.add_resource(addRecord,'/addRecord/<int:id>/<string:title>')
 api.add_resource(getRecord,'/getRecord/<int:id>')
 api.add_resource(addPresc,'/addPresc/<int:rid>/<string:uid>')
 api.add_resource(getPresc,'/getPresc/<int:rid>')
+api.add_resource(addXray,'/addXray/<int:id>/<string:uid>')
+api.add_resource(getXray,'/getXray/<int:id>')
+api.add_resource(addReport,'/addReport/<int:id>/<string:uid>')
+api.add_resource(getReport,'/getReport/<int:id>')
+api.add_resource(addMisc,'/addMisc/<int:id>/<string:uid>')
+api.add_resource(getMisc,'/getMisc/<int:id>')
 if __name__ == '__main__':
     app.run()
