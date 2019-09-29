@@ -32,6 +32,7 @@ class addPatient(Resource):
     def get(self,name,email,phone,gender,dob,addr):
         #Connect to databse
         addr = addr.replace("*","/")
+        addr = addr.replace("'","\"")
         conn = e.connect()
         cquerry= conn.execute("select pcount from counters where name='Patient'")
         id = cquerry.cursor.fetchall()[0][0]
@@ -78,6 +79,22 @@ class getPresc(Resource):
         for i in query.cursor.fetchall():
             result.append(i[0])
         return result
+class remPresc(Resource):
+    def get(self,uid):
+        conn = e.connect()
+        conn.execute("delete from prescription where uid='"+uid+"'")
+class remXray(Resource):
+    def get(self,uid):
+        conn = e.connect()
+        conn.execute("delete from xray where uid='"+uid+"'")
+class remReport(Resource):
+    def get(self,uid):
+        conn = e.connect()
+        conn.execute("delete from report where uid='"+uid+"'")
+class remMisc(Resource):
+    def get(self,uid):
+        conn = e.connect()
+        conn.execute("delete from misc where uid='"+uid+"'")
 class addXray(Resource):
     def get(self,id,uid):
         conn = e.connect()
@@ -115,6 +132,10 @@ class getMisc(Resource):
         for i in query.cursor.fetchall():
             result.append(i[0])
         return result
+class remRec(Resource):
+    def get(self,rid):
+        conn = e.connect()
+        conn.execute("delete from Records where rid="+str(rid))
 api.add_resource(getpatients,'/getp/<string:name>')
 api.add_resource(addPatient,'/addPatient/<string:name>/<string:email>/<string:phone>/<string:gender>/<string:dob>/<string:addr>')
 api.add_resource(addRecord,'/addRecord/<int:id>/<string:title>')
@@ -127,5 +148,10 @@ api.add_resource(addReport,'/addReport/<int:id>/<string:uid>')
 api.add_resource(getReport,'/getReport/<int:id>')
 api.add_resource(addMisc,'/addMisc/<int:id>/<string:uid>')
 api.add_resource(getMisc,'/getMisc/<int:id>')
+api.add_resource(remPresc,'/remPresc/<string:uid>')
+api.add_resource(remXray,'/remXray/<string:uid>')
+api.add_resource(remReport,'/remReport/<string:uid>')
+api.add_resource(remMisc,'/remMisc/<string:uid>')
+api.add_resource(remRec,'/remRec/<int:rid>')
 if __name__ == '__main__':
     app.run()
