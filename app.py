@@ -16,7 +16,7 @@ class getpatients(Resource):
         #Connect to databse
         conn = e.connect()
         #Perform query and return JSON data
-        query = conn.execute("select * from patient where name like '"+name+"%';")
+        query = conn.execute("select * from patient where name like '%"+name+"%';")
         for i in query.cursor.fetchall():
             dict = {'id':i[0],
                     'name':i[1],
