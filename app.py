@@ -50,7 +50,7 @@ class addRecord(Resource):
         cquerry= conn.execute("select pcount from counters where name='Record'")
         rid = cquerry.cursor.fetchall()[0][0]
         conn.execute("update counters set pcount=pcount+1 where name='Record'")
-        values= "(%d,%d,'%s','%s','%s')" %(int(id),int(rid),tdate,title,ttime)
+        values= "(%d,%d,'%s','%s','%s',0)" %(int(id),int(rid),tdate,title,ttime)
         query = conn.execute("insert into Records values"+values)
         
 class getRecord(Resource):
@@ -65,6 +65,7 @@ class getRecord(Resource):
                 'tdate' : i[2],
                 'title' : i[3],
                 'ttime' : i[4],
+                'attachment' : i[5]
             }
             result.append(dict)
         return result
