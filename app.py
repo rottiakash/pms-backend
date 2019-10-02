@@ -138,6 +138,13 @@ class remRec(Resource):
     def get(self,rid):
         conn = e.connect()
         conn.execute("delete from Records where rid="+str(rid))
+class editPatient(Resource):
+    def get(self,id,name,email,phone,gender,dob,addr):
+        conn = e.connect()
+        addr = addr.replace("*","/")
+        addr = addr.replace("'","\"")
+        querry = "update patient set name='%s', email='%s', phone=%d, gender='%s', dob='%s', address='%s' where id=%d" %(name,email,int(phone),gender,dob,addr,int(id))
+        conn.execute(querry)
 api.add_resource(getpatients,'/getp/<string:name>')
 api.add_resource(addPatient,'/addPatient/<string:name>/<string:email>/<string:phone>/<string:gender>/<string:dob>/<string:addr>')
 api.add_resource(addRecord,'/addRecord/<int:id>/<string:title>')
@@ -155,5 +162,6 @@ api.add_resource(remXray,'/remXray/<string:uid>')
 api.add_resource(remReport,'/remReport/<string:uid>')
 api.add_resource(remMisc,'/remMisc/<string:uid>')
 api.add_resource(remRec,'/remRec/<int:rid>')
+api.add_resource(editPatient,'/edit/<int:id>/<string:name>/<string:email>/<string:phone>/<string:gender>/<string:dob>/<string:addr>')
 if __name__ == '__main__':
     app.run()
