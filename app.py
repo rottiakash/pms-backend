@@ -37,7 +37,6 @@ class addPatient(Resource):
         conn = e.connect()
         cquerry= conn.execute("select pcount from counters where name='Patient'")
         id = cquerry.cursor.fetchall()[0][0]
-        conn.execute("update counters set pcount=pcount+1 where name='Patient'")
         values = "('%d','%s','%s',%d,'%s','%s','%s')" %(int(id),name,email,int(phone),gender,dob,addr)
         #Perform query and return JSON data
         query = conn.execute("insert into patient values"+values)
@@ -49,7 +48,6 @@ class addRecord(Resource):
         conn = e.connect()
         cquerry= conn.execute("select pcount from counters where name='Record'")
         rid = cquerry.cursor.fetchall()[0][0]
-        conn.execute("update counters set pcount=pcount+1 where name='Record'")
         values= "(%d,%d,'%s','%s','%s',0)" %(int(id),int(rid),tdate,title,ttime)
         query = conn.execute("insert into Records values"+values)
         
@@ -145,6 +143,24 @@ class editPatient(Resource):
         addr = addr.replace("'","\"")
         querry = "update patient set name='%s', email='%s', phone=%d, gender='%s', dob='%s', address='%s' where id=%d" %(name,email,int(phone),gender,dob,addr,int(id))
         conn.execute(querry)
+class addPatientWoP(Resource):
+    def get(self,name,email,phone,gender,dob,addr):
+        #Connect to databse
+        addr = addr.replace("*","/")
+        addr = addr.replace("'","\"")
+        conn = e.connect()
+        cquerry= conn.execute("select pcount from counters where name='Patient'")
+        id = cquerry.cursor.fetchall()[0][0]
+        values = "('%d','%s','%s',%s,'%s','%s','%s')" %(int(id),name,email,phone,gender,dob,addr)
+        #Perform query and return JSON data
+        query = conn.execute("insert into patient values"+values)
+class editPatientwop(Resource):
+    def get(self,id,name,email,phone,gender,dob,addr):
+        conn = e.connect()
+        addr = addr.replace("*","/")
+        addr = addr.replace("'","\"")
+        querry = "update patient set name='%s', email='%s', gender='%s', dob='%s', address='%s' where id=%d" %(name,email,gender,dob,addr,int(id))
+        conn.execute(querry)
 api.add_resource(getpatients,'/getp/<string:name>')
 api.add_resource(addPatient,'/addPatient/<string:name>/<string:email>/<string:phone>/<string:gender>/<string:dob>/<string:addr>')
 api.add_resource(addRecord,'/addRecord/<int:id>/<string:title>')
@@ -163,5 +179,7 @@ api.add_resource(remReport,'/remReport/<string:uid>')
 api.add_resource(remMisc,'/remMisc/<string:uid>')
 api.add_resource(remRec,'/remRec/<int:rid>')
 api.add_resource(editPatient,'/edit/<int:id>/<string:name>/<string:email>/<string:phone>/<string:gender>/<string:dob>/<string:addr>')
+api.add_resource(addPatientWoP,'/addPatientwop/<string:name>/<string:email>/<string:phone>/<string:gender>/<string:dob>/<string:addr>')
+api.add_resource(editPatientwop,'/editwop/<int:id>/<string:name>/<string:email>/<string:phone>/<string:gender>/<string:dob>/<string:addr>')
 if __name__ == '__main__':
     app.run()
