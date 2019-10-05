@@ -161,6 +161,11 @@ class editPatientwop(Resource):
         addr = addr.replace("'","\"")
         querry = "update patient set name='%s', email='%s', gender='%s', dob='%s', address='%s' where id=%d" %(name,email,gender,dob,addr,int(id))
         conn.execute(querry)
+class editRecord(Resource):
+    def get(self,rid,title):
+        conn = e.connect()
+        querry = "update records set title='%s' where rid=%d" %(title,int(rid))
+        conn.execute(querry)
 api.add_resource(getpatients,'/getp/<string:name>')
 api.add_resource(addPatient,'/addPatient/<string:name>/<string:email>/<string:phone>/<string:gender>/<string:dob>/<string:addr>')
 api.add_resource(addRecord,'/addRecord/<int:id>/<string:title>')
@@ -181,5 +186,6 @@ api.add_resource(remRec,'/remRec/<int:rid>')
 api.add_resource(editPatient,'/edit/<int:id>/<string:name>/<string:email>/<string:phone>/<string:gender>/<string:dob>/<string:addr>')
 api.add_resource(addPatientWoP,'/addPatientwop/<string:name>/<string:email>/<string:phone>/<string:gender>/<string:dob>/<string:addr>')
 api.add_resource(editPatientwop,'/editwop/<int:id>/<string:name>/<string:email>/<string:phone>/<string:gender>/<string:dob>/<string:addr>')
+api.add_resource(editRecord,'/editRec/<int:rid>/<string:title>')
 if __name__ == '__main__':
     app.run()
