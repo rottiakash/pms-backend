@@ -40,26 +40,26 @@ class addPatient(Resource):
         values = "('%d','%s','%s',%d,'%s','%s','%s')" %(int(id),name,email,int(phone),gender,dob,addr)
         #Perform query and return JSON data
         query = conn.execute("insert into patient values"+values)
-class addRecord(Resource):
+class addTreatment(Resource):
     def get(self,id,title):
         today = datetime.datetime.now()
         tdate = today.strftime('%d-%b-%y')
         ttime = today.strftime('%I:%M %p')
         conn = e.connect()
-        cquerry= conn.execute("select pcount from counters where name='Record'")
-        rid = cquerry.cursor.fetchall()[0][0]
-        values= "(%d,%d,'%s','%s','%s',0)" %(int(id),int(rid),tdate,title,ttime)
-        query = conn.execute("insert into Records values"+values)
+        cquerry= conn.execute("select pcount from counters where name='Treatment'")
+        tid = cquerry.cursor.fetchall()[0][0]
+        values= "(%d,%d,'%s','%s','%s',0)" %(int(id),int(tid),tdate,title,ttime)
+        query = conn.execute("insert into Treatments values"+values)
         
-class getRecord(Resource):
+class getTreatment(Resource):
     def get(self,id):
         result = []
         conn = e.connect()
-        query = conn.execute("select * from Records where id="+str(id))
+        query = conn.execute("select * from Treatments where id="+str(id))
         for i in query.cursor.fetchall():
             dict = {
                 'id' : i[0],
-                'rid' : i[1],
+                'tid' : i[1],
                 'tdate' : i[2],
                 'title' : i[3],
                 'ttime' : i[4],
@@ -68,14 +68,14 @@ class getRecord(Resource):
             result.append(dict)
         return result
 class addPresc(Resource):
-    def get(self,rid,uid):
+    def get(self,tid,uid):
         conn = e.connect()
-        conn.execute("insert into prescription values("+str(rid)+",'"+uid+"')")
+        conn.execute("insert into prescription values("+str(tid)+",'"+uid+"')")
 class getPresc(Resource):
-    def get(self,rid):
+    def get(self,tid):
         result = []
         conn = e.connect()
-        query = conn.execute("select uid from prescription where rid="+str(rid))
+        query = conn.execute("select uid from prescription where tid="+str(tid))
         for i in query.cursor.fetchall():
             result.append(i[0])
         return result
@@ -133,9 +133,9 @@ class getMisc(Resource):
             result.append(i[0])
         return result
 class remRec(Resource):
-    def get(self,rid):
+    def get(self,tid):
         conn = e.connect()
-        conn.execute("delete from Records where rid="+str(rid))
+        conn.execute("delete from Treatments where tid="+str(tid))
 class editPatient(Resource):
     def get(self,id,name,email,phone,gender,dob,addr):
         conn = e.connect()
@@ -161,17 +161,17 @@ class editPatientwop(Resource):
         addr = addr.replace("'","\"")
         querry = "update patient set name='%s', email='%s', gender='%s', dob='%s', address='%s' where id=%d" %(name,email,gender,dob,addr,int(id))
         conn.execute(querry)
-class editRecord(Resource):
-    def get(self,rid,title):
+class editTreatment(Resource):
+    def get(self,tid,title):
         conn = e.connect()
-        querry = "update records set title='%s' where rid=%d" %(title,int(rid))
+        querry = "update treatments set title='%s' where tid=%d" %(title,int(tid))
         conn.execute(querry)
 api.add_resource(getpatients,'/getp/<string:name>')
 api.add_resource(addPatient,'/addPatient/<string:name>/<string:email>/<string:phone>/<string:gender>/<string:dob>/<string:addr>')
-api.add_resource(addRecord,'/addRecord/<int:id>/<string:title>')
-api.add_resource(getRecord,'/getRecord/<int:id>')
-api.add_resource(addPresc,'/addPresc/<int:rid>/<string:uid>')
-api.add_resource(getPresc,'/getPresc/<int:rid>')
+api.add_resource(addTreatment,'/addTreatment/<int:id>/<string:title>')
+api.add_resource(getTreatment,'/getTreatment/<int:id>')
+api.add_resource(addPresc,'/addPresc/<int:tid>/<string:uid>')
+api.add_resource(getPresc,'/getPresc/<int:tid>')
 api.add_resource(addXray,'/addXray/<int:id>/<string:uid>')
 api.add_resource(getXray,'/getXray/<int:id>')
 api.add_resource(addReport,'/addReport/<int:id>/<string:uid>')
@@ -182,10 +182,10 @@ api.add_resource(remPresc,'/remPresc/<string:uid>')
 api.add_resource(remXray,'/remXray/<string:uid>')
 api.add_resource(remReport,'/remReport/<string:uid>')
 api.add_resource(remMisc,'/remMisc/<string:uid>')
-api.add_resource(remRec,'/remRec/<int:rid>')
+api.add_resource(remRec,'/remRec/<int:tid>')
 api.add_resource(editPatient,'/edit/<int:id>/<string:name>/<string:email>/<string:phone>/<string:gender>/<string:dob>/<string:addr>')
 api.add_resource(addPatientWoP,'/addPatientwop/<string:name>/<string:email>/<string:phone>/<string:gender>/<string:dob>/<string:addr>')
 api.add_resource(editPatientwop,'/editwop/<int:id>/<string:name>/<string:email>/<string:phone>/<string:gender>/<string:dob>/<string:addr>')
-api.add_resource(editRecord,'/editRec/<int:rid>/<string:title>')
+api.add_resource(editTreatment,'/editTreat/<int:tid>/<string:title>')
 if __name__ == '__main__':
     app.run()
