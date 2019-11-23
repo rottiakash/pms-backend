@@ -166,6 +166,24 @@ class editTreatment(Resource):
         conn = e.connect()
         querry = "update treatments set title='%s' where tid=%d" %(title,int(tid))
         conn.execute(querry)
+class listAll(Resource):
+    def get(self):
+        result.clear()
+        #Connect to databse
+        conn = e.connect()
+        #Perform query and return JSON data
+        query = conn.execute("select * from patient;")
+        for i in query.cursor.fetchall():
+            dict = {'id':i[0],
+                    'name':i[1],
+                    'email':i[2],
+                    'phone':i[3],
+                    'gender':i[4],
+                    'dob':i[5],
+                    'address':i[6],
+                    }
+            result.append(dict)
+        return result
 api.add_resource(getpatients,'/getp/<string:name>')
 api.add_resource(addPatient,'/addPatient/<string:name>/<string:email>/<string:phone>/<string:gender>/<string:dob>/<string:addr>')
 api.add_resource(addTreatment,'/addTreatment/<int:id>/<string:title>')
@@ -187,5 +205,6 @@ api.add_resource(editPatient,'/edit/<int:id>/<string:name>/<string:email>/<strin
 api.add_resource(addPatientWoP,'/addPatientwop/<string:name>/<string:email>/<string:phone>/<string:gender>/<string:dob>/<string:addr>')
 api.add_resource(editPatientwop,'/editwop/<int:id>/<string:name>/<string:email>/<string:phone>/<string:gender>/<string:dob>/<string:addr>')
 api.add_resource(editTreatment,'/editTreat/<int:tid>/<string:title>')
+api.add_resource(listAll,'/listall')
 if __name__ == '__main__':
     app.run()
