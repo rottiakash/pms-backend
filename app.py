@@ -29,6 +29,11 @@ class getpatients(Resource):
             result.append(dict)
         return result
 
+class remPatient(Resource):
+    def get(self,id):
+        conn = e.connect()
+        conn.execute("delete from patient where id='"+str(id)+"'")
+
 class addPatient(Resource):
     def get(self,name,email,phone,gender,dob,addr):
         #Connect to databse
@@ -201,6 +206,7 @@ api.add_resource(remXray,'/remXray/<string:uid>')
 api.add_resource(remReport,'/remReport/<string:uid>')
 api.add_resource(remMisc,'/remMisc/<string:uid>')
 api.add_resource(remRec,'/remRec/<int:tid>')
+api.add_resource(remPatient,'/remPatient/<int:id>')
 api.add_resource(editPatient,'/edit/<int:id>/<string:name>/<string:email>/<string:phone>/<string:gender>/<string:dob>/<string:addr>')
 api.add_resource(addPatientWoP,'/addPatientwop/<string:name>/<string:email>/<string:phone>/<string:gender>/<string:dob>/<string:addr>')
 api.add_resource(editPatientwop,'/editwop/<int:id>/<string:name>/<string:email>/<string:phone>/<string:gender>/<string:dob>/<string:addr>')
